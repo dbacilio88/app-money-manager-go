@@ -1,0 +1,88 @@
+# Binarios compilados
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+bin/
+dist/
+
+# Test binaries
+*.test
+
+# Output de coverage
+*.out
+coverage.out
+coverage.html
+
+# Go workspace
+go.work
+go.work.sum
+
+# Archivos de dependencias
+vendor/
+
+# Archivos de entorno
+.env
+.env.local
+.env.*.local
+
+# IDE - VSCode
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+*.code-workspace
+
+# IDE - GoLand/IntelliJ
+.idea/
+*.iml
+*.iws
+*.ipr
+
+# IDE - otros
+.DS_Store
+*.swp
+*.swo
+*~
+
+# Logs
+*.log
+logs/
+log/
+
+# OS
+Thumbs.db
+.DS_Store
+
+# MongoDB
+data/
+mongo-data/
+
+# Temporal
+tmp/
+temp/
+*.tmp
+
+# Archivos de backup
+*.bak
+*.backup
+
+# Debug
+__debug_bin
+
+# Air (hot reload)
+tmp/
+.air.toml
+
+# Profiling
+*.pprof
+*.prof
+
+# Secrets y certificados
+*.pem
+*.key
+*.crt
+*.p12
+secrets/

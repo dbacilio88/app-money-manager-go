@@ -1,0 +1,565 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Control Financiero</title>
+    <link rel="stylesheet" href="/web/static/styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <!-- Modal de Refresh Token -->
+    <div id="refreshModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <i class="fas fa-clock"></i>
+                <h2>Sesión por expirar</h2>
+            </div>
+            <div class="modal-body">
+                <p>Tu sesión expirará en <span id="countdown">60</span> segundos.</p>
+                <p>¿Deseas continuar con tu sesión?</p>
+            </div>
+            <div class="modal-footer">
+                <button id="refreshBtn" class="btn btn-primary">
+                    <i class="fas fa-sync-alt"></i> Renovar Sesión
+                </button>
+                <button id="logoutBtn" class="btn btn-secondary">
+                    <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Pantalla de Login -->
+    <div id="loginScreen" class="screen active">
+        <div class="login-container">
+            <div class="login-card">
+                <div class="login-header">
+                    <i class="fas fa-wallet"></i>
+                    <h1>Control Financiero</h1>
+                    <p>Gestiona tus finanzas de manera inteligente</p>
+                </div>
+
+                <div class="login-tabs">
+                    <button class="tab-btn active" data-tab="login">Iniciar Sesión</button>
+                    <button class="tab-btn" data-tab="register">Registrarse</button>
+                </div>
+
+                <!-- Formulario de Login -->
+                <form id="loginForm" class="auth-form active">
+                    <div class="form-group">
+                        <label for="loginEmail">
+                            <i class="fas fa-envelope"></i> Correo Electrónico
+                        </label>
+                        <input type="email" id="loginEmail" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="loginPassword">
+                            <i class="fas fa-lock"></i> Contraseña
+                        </label>
+                        <div class="password-input">
+                            <input type="password" id="loginPassword" required>
+                            <button type="button" class="toggle-password">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-block">
+                        <i class="fas fa-sign-in-alt"></i> Iniciar Sesión
+                    </button>
+                </form>
+
+                <!-- Formulario de Registro -->
+                <form id="registerForm" class="auth-form">
+                    <div class="form-group">
+                        <label for="registerNombre">
+                            <i class="fas fa-user"></i> Nombre Completo
+                        </label>
+                        <input type="text" id="registerNombre" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="registerEmail">
+                            <i class="fas fa-envelope"></i> Correo Electrónico
+                        </label>
+                        <input type="email" id="registerEmail" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="registerPassword">
+                            <i class="fas fa-lock"></i> Contraseña
+                        </label>
+                        <div class="password-input">
+                            <input type="password" id="registerPassword" required>
+                            <button type="button" class="toggle-password">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="registerPasswordConfirm">
+                            <i class="fas fa-lock"></i> Confirmar Contraseña
+                        </label>
+                        <div class="password-input">
+                            <input type="password" id="registerPasswordConfirm" required>
+                            <button type="button" class="toggle-password">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-block">
+                        <i class="fas fa-user-plus"></i> Registrarse
+                    </button>
+                </form>
+
+                <div class="divider">
+                    <span>O continúa con</span>
+                </div>
+
+                <button id="googleLoginBtn" class="btn btn-google btn-block">
+                    <svg class="google-icon" viewBox="0 0 24 24">
+                        <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+                        <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+                        <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
+                        <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+                    </svg>
+                    Continuar con Google
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Pantalla Principal (Dashboard) -->
+    <div id="dashboardScreen" class="screen">
+        <!-- Header con timer y usuario -->
+        <header class="header">
+            <div class="header-left">
+                <button id="menuToggle" class="menu-toggle">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <h1 class="app-title">Control Financiero</h1>
+            </div>
+            <div class="header-right">
+                <div id="sessionTimer" class="session-timer">
+                    <i class="fas fa-clock"></i>
+                    <span id="timerDisplay">14:59</span>
+                </div>
+                <div class="user-menu">
+                    <button class="user-menu-btn">
+                        <img id="userAvatar" src="/assets/images/avatar-default.png" alt="Usuario">
+                        <span id="userName">Usuario</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </button>
+                    <div class="user-dropdown">
+                        <a href="#" data-view="perfil">
+                            <i class="fas fa-user"></i> Mi Perfil
+                        </a>
+                        <a href="#" id="logoutLink">
+                            <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Sidebar -->
+        <aside id="sidebar" class="sidebar">
+            <nav class="sidebar-nav">
+                <a href="#" class="nav-item active" data-view="dashboard">
+                    <i class="fas fa-chart-line"></i>
+                    <span>Dashboard</span>
+                </a>
+                <a href="#" class="nav-item" data-view="transacciones">
+                    <i class="fas fa-exchange-alt"></i>
+                    <span>Transacciones</span>
+                </a>
+                <a href="#" class="nav-item" data-view="categorias">
+                    <i class="fas fa-tags"></i>
+                    <span>Categorías</span>
+                </a>
+                <a href="#" class="nav-item" data-view="reportes">
+                    <i class="fas fa-file-invoice-dollar"></i>
+                    <span>Reportes</span>
+                </a>
+                <a href="#" class="nav-item admin-only" data-view="usuarios">
+                    <i class="fas fa-users-cog"></i>
+                    <span>Usuarios</span>
+                </a>
+            </nav>
+        </aside>
+
+        <!-- Contenido Principal -->
+        <main class="main-content">
+            <!-- Vista Dashboard -->
+            <div id="dashboardView" class="view active">
+                <div class="view-header">
+                    <h2>Dashboard</h2>
+                    <button class="btn btn-primary" id="nuevaTransaccionBtn">
+                        <i class="fas fa-plus"></i> Nueva Transacción
+                    </button>
+                </div>
+
+                <!-- Balance Cards -->
+                <div class="balance-cards">
+                    <div class="balance-card income">
+                        <div class="balance-icon">
+                            <i class="fas fa-arrow-up"></i>
+                        </div>
+                        <div class="balance-info">
+                            <p class="balance-label">Ingresos del Mes</p>
+                            <p class="balance-amount" id="ingresosTotal">$0.00</p>
+                        </div>
+                    </div>
+                    <div class="balance-card expense">
+                        <div class="balance-icon">
+                            <i class="fas fa-arrow-down"></i>
+                        </div>
+                        <div class="balance-info">
+                            <p class="balance-label">Egresos del Mes</p>
+                            <p class="balance-amount" id="egresosTotal">$0.00</p>
+                        </div>
+                    </div>
+                    <div class="balance-card balance">
+                        <div class="balance-icon">
+                            <i class="fas fa-wallet"></i>
+                        </div>
+                        <div class="balance-info">
+                            <p class="balance-label">Balance</p>
+                            <p class="balance-amount" id="balanceTotal">$0.00</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Gráficas -->
+                <div class="charts-grid">
+                    <div class="chart-card">
+                        <h3>Ingresos vs Egresos</h3>
+                        <canvas id="ingresosEgresosChart"></canvas>
+                    </div>
+                    <div class="chart-card">
+                        <h3>Gastos por Categoría</h3>
+                        <canvas id="categoriasPieChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Transacciones Recientes -->
+                <div class="recent-transactions">
+                    <h3>Transacciones Recientes</h3>
+                    <div id="recentTransactionsList" class="transactions-list">
+                        <!-- Se llenará dinámicamente -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Vista Transacciones -->
+            <div id="transaccionesView" class="view">
+                <div class="view-header">
+                    <h2>Transacciones</h2>
+                    <button class="btn btn-primary" id="nuevaTransaccionBtn2">
+                        <i class="fas fa-plus"></i> Nueva Transacción
+                    </button>
+                </div>
+
+                <!-- Filtros -->
+                <div class="filters-card">
+                    <div class="filter-group">
+                        <label>Tipo:</label>
+                        <select id="filtroTipo">
+                            <option value="">Todos</option>
+                            <option value="ingreso">Ingresos</option>
+                            <option value="egreso">Egresos</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label>Categoría:</label>
+                        <select id="filtroCategoria">
+                            <option value="">Todas</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label>Desde:</label>
+                        <input type="date" id="filtroFechaDesde">
+                    </div>
+                    <div class="filter-group">
+                        <label>Hasta:</label>
+                        <input type="date" id="filtroFechaHasta">
+                    </div>
+                    <button class="btn btn-secondary" id="aplicarFiltrosBtn">
+                        <i class="fas fa-filter"></i> Aplicar
+                    </button>
+                    <button class="btn btn-light" id="limpiarFiltrosBtn">
+                        <i class="fas fa-times"></i> Limpiar
+                    </button>
+                </div>
+
+                <!-- Tabla de Transacciones -->
+                <div class="table-card">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Fecha</th>
+                                <th>Tipo</th>
+                                <th>Categoría</th>
+                                <th>Descripción</th>
+                                <th>Monto</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody id="transaccionesTableBody">
+                            <!-- Se llenará dinámicamente -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Vista Categorías -->
+            <div id="categoriasView" class="view">
+                <div class="view-header">
+                    <h2>Categorías</h2>
+                    <button class="btn btn-primary" id="nuevaCategoriaBtn">
+                        <i class="fas fa-plus"></i> Nueva Categoría
+                    </button>
+                </div>
+
+                <div class="categories-grid" id="categoriasGrid">
+                    <!-- Se llenará dinámicamente -->
+                </div>
+            </div>
+
+            <!-- Vista Reportes -->
+            <div id="reportesView" class="view">
+                <div class="view-header">
+                    <h2>Reportes</h2>
+                    <div class="report-controls">
+                        <select id="reporteMes">
+                            <option value="1">Enero</option>
+                            <option value="2">Febrero</option>
+                            <option value="3">Marzo</option>
+                            <option value="4">Abril</option>
+                            <option value="5">Mayo</option>
+                            <option value="6">Junio</option>
+                            <option value="7">Julio</option>
+                            <option value="8">Agosto</option>
+                            <option value="9">Septiembre</option>
+                            <option value="10">Octubre</option>
+                            <option value="11">Noviembre</option>
+                            <option value="12">Diciembre</option>
+                        </select>
+                        <select id="reporteAnio">
+                            <!-- Se llenará dinámicamente -->
+                        </select>
+                        <button class="btn btn-primary" id="generarReporteBtn">
+                            <i class="fas fa-chart-bar"></i> Generar Reporte
+                        </button>
+                    </div>
+                </div>
+
+                <div id="reporteContent" class="report-content">
+                    <!-- Se llenará dinámicamente -->
+                </div>
+            </div>
+
+            <!-- Vista Usuarios (Admin) -->
+            <div id="usuariosView" class="view admin-only">
+                <div class="view-header">
+                    <h2>Gestión de Usuarios</h2>
+                </div>
+
+                <!-- Tabs para usuarios -->
+                <div class="users-tabs">
+                    <button class="tab-btn active" data-tab="pending">Pendientes</button>
+                    <button class="tab-btn" data-tab="active">Activos</button>
+                    <button class="tab-btn" data-tab="suspended">Suspendidos</button>
+                </div>
+
+                <div class="table-card">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Nombre</th>
+                                <th>Email</th>
+                                <th>Rol</th>
+                                <th>Estado</th>
+                                <th>Fecha Registro</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody id="usuariosTableBody">
+                            <!-- Se llenará dinámicamente -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Vista Perfil -->
+            <div id="perfilView" class="view">
+                <div class="view-header">
+                    <h2>Mi Perfil</h2>
+                </div>
+
+                <div class="profile-card">
+                    <div class="profile-avatar">
+                        <img id="perfilAvatar" src="/assets/images/avatar-default.png" alt="Avatar">
+                        <button class="btn btn-secondary btn-sm">
+                            <i class="fas fa-camera"></i> Cambiar Foto
+                        </button>
+                    </div>
+                    <div class="profile-form">
+                        <form id="perfilForm">
+                            <div class="form-group">
+                                <label>Nombre Completo</label>
+                                <input type="text" id="perfilNombre">
+                            </div>
+                            <div class="form-group">
+                                <label>Email</label>
+                                <input type="email" id="perfilEmail" disabled>
+                            </div>
+                            <div class="form-group">
+                                <label>Rol</label>
+                                <input type="text" id="perfilRol" disabled>
+                            </div>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-save"></i> Guardar Cambios
+                            </button>
+                        </form>
+
+                        <hr>
+
+                        <h3>Cambiar Contraseña</h3>
+                        <form id="cambiarPasswordForm">
+                            <div class="form-group">
+                                <label>Contraseña Actual</label>
+                                <input type="password" id="passwordActual">
+                            </div>
+                            <div class="form-group">
+                                <label>Nueva Contraseña</label>
+                                <input type="password" id="passwordNueva">
+                            </div>
+                            <div class="form-group">
+                                <label>Confirmar Nueva Contraseña</label>
+                                <input type="password" id="passwordNuevaConfirm">
+                            </div>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-key"></i> Cambiar Contraseña
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Modal de Nueva Transacción -->
+    <div id="transaccionModal" class="modal">
+        <div class="modal-content modal-large">
+            <div class="modal-header">
+                <h2 id="transaccionModalTitle">Nueva Transacción</h2>
+                <button class="close-modal">&times;</button>
+            </div>
+            <form id="transaccionForm">
+                <div class="modal-body">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Tipo *</label>
+                            <select id="transaccionTipo" required>
+                                <option value="">Seleccionar...</option>
+                                <option value="ingreso">Ingreso</option>
+                                <option value="egreso">Egreso</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Categoría *</label>
+                            <select id="transaccionCategoria" required>
+                                <option value="">Seleccionar...</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Monto *</label>
+                            <input type="number" id="transaccionMonto" step="0.01" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Moneda</label>
+                            <select id="transaccionMoneda">
+                                <option value="USD">USD</option>
+                                <option value="MXN">MXN</option>
+                                <option value="EUR">EUR</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Fecha *</label>
+                        <input type="date" id="transaccionFecha" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Descripción</label>
+                        <textarea id="transaccionDescripcion" rows="3"></textarea>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Cuenta</label>
+                            <input type="text" id="transaccionCuenta" placeholder="Ej: Banco BBVA">
+                        </div>
+                        <div class="form-group">
+                            <label>Método de Pago</label>
+                            <input type="text" id="transaccionMetodo" placeholder="Ej: Tarjeta, Efectivo">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Tags (separados por comas)</label>
+                        <input type="text" id="transaccionTags" placeholder="Ej: recurrente, importante">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary close-modal">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save"></i> Guardar
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal de Nueva Categoría -->
+    <div id="categoriaModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="categoriaModalTitle">Nueva Categoría</h2>
+                <button class="close-modal">&times;</button>
+            </div>
+            <form id="categoriaForm">
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label>Nombre *</label>
+                        <input type="text" id="categoriaNombre" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Tipo *</label>
+                        <select id="categoriaTipo" required>
+                            <option value="">Seleccionar...</option>
+                            <option value="ingreso">Ingreso</option>
+                            <option value="egreso">Egreso</option>
+                            <option value="ambos">Ambos</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Color</label>
+                        <div class="color-picker">
+                            <input type="color" id="categoriaColor" value="#ffc8dd">
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary close-modal">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save"></i> Guardar
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <script src="/web/static/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,41 @@
+# EditorConfig para mantener estilos consistentes entre editores
+# https://editorconfig.org
+
+root = true
+
+# Configuración por defecto
+[*]
+charset = utf-8
+end_of_line = lf
+insert_final_newline = true
+trim_trailing_whitespace = true
+indent_style = space
+indent_size = 2
+
+# Archivos Go
+[*.go]
+indent_style = tab
+indent_size = 4
+
+# Archivos Makefile
+[Makefile]
+indent_style = tab
+
+# Archivos YAML
+[*.{yml,yaml}]
+indent_style = space
+indent_size = 2
+
+# Archivos JSON
+[*.json]
+indent_style = space
+indent_size = 2
+
+# Archivos Markdown
+[*.md]
+trim_trailing_whitespace = false
+
+# Archivos de configuración
+[{.env*,*.conf,*.config}]
+indent_style = space
+indent_size = 2

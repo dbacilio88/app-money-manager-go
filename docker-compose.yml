@@ -1,0 +1,61 @@
+version: '3.8'
+
+services:
+  mongo:
+    image: mongo:7.0
+    container_name: control-financiero-mongo
+    restart: unless-stopped
+    environment:
+      MONGO_INITDB_DATABASE: control_financiero
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo-data:/data/db
+    networks:
+      - control-financiero-network
+
+  mongo-express:
+    image: mongo-express:latest
+    container_name: control-financiero-mongo-express
+    restart: unless-stopped
+    ports:
+      - "8081:8081"
+    environment:
+      ME_CONFIG_MONGODB_SERVER: mongo
+      ME_CONFIG_MONGODB_PORT: 27017
+      ME_CONFIG_BASICAUTH_USERNAME: admin
+      ME_CONFIG_BASICAUTH_PASSWORD: admin123
+    depends_on:
+      - mongo
+    networks:
+      - control-financiero-network
+
+  app:
+    build: .
+    container_name: control-financiero-app
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+    environment:
+      ENV: production
+      PORT: 8080
+      MONGO_URI: mongodb://mongo:27017
+      MONGO_DB: control_financiero
+      JWT_SECRET: ${JWT_SECRET:-super-secret-change-in-production}
+      JWT_EXPIRATION: 15m
+      REFRESH_EXPIRATION: 168h
+      GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID}
+      GOOGLE_CLIENT_SECRET: ${GOOGLE_CLIENT_SECRET}
+      GOOGLE_REDIRECT_URL: ${GOOGLE_REDIRECT_URL:-http://localhost:8080/api/v1/auth/google/callback}
+      APP_URL: ${APP_URL:-http://localhost:8080}
+    depends_on:
+      - mongo
+    networks:
+      - control-financiero-network
+
+volumes:
+  mongo-data:
+
+networks:
+  control-financiero-network:
+    driver: bridge

@@ -1,0 +1,12 @@
+{
+  "recommendations": [
+    "golang.go",
+    "mongodb.mongodb-vscode",
+    "eamodio.gitlens",
+    "EditorConfig.EditorConfig",
+    "ms-azuretools.vscode-docker",
+    "GitHub.copilot",
+    "redhat.vscode-yaml",
+    "esbenp.prettier-vscode"
+  ]
+}

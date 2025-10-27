@@ -1,0 +1,44 @@
+{
+  "go.toolsManagement.autoUpdate": true,
+  "go.useLanguageServer": true,
+  "go.lintTool": "golangci-lint",
+  "go.lintOnSave": "workspace",
+  "go.formatTool": "goimports",
+  "go.formatOnSave": true,
+  "go.testOnSave": false,
+  "go.coverOnSave": false,
+  "go.buildOnSave": "off",
+  "go.vetOnSave": "workspace",
+  "go.testFlags": ["-v", "-race"],
+  "go.testTimeout": "30s",
+  "[go]": {
+    "editor.formatOnSave": true,
+    "editor.codeActionsOnSave": {
+      "source.organizeImports": "explicit"
+    }
+  },
+  "[go.mod]": {
+    "editor.formatOnSave": true,
+    "editor.codeActionsOnSave": {
+      "source.organizeImports": "explicit"
+    }
+  },
+  "files.exclude": {
+    "**/.git": true,
+    "**/.DS_Store": true,
+    "**/bin": true,
+    "**/*.exe": true
+  },
+  "files.associations": {
+    "*.env*": "properties",
+    "Dockerfile*": "dockerfile"
+  },
+  "editor.rulers": [80, 120],
+  "editor.tabSize": 4,
+  "editor.insertSpaces": false,
+  "files.eol": "\n",
+  "files.trimTrailingWhitespace": true,
+  "files.insertFinalNewline": true,
+  "terminal.integrated.defaultProfile.linux": "bash",
+  "terminal.integrated.defaultProfile.windows": "PowerShell"
+}
